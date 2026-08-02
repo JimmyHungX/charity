@@ -1,3 +1,87 @@
+// 綠界測試金流金鑰設定
+const ECPAY_CONFIG = {
+  MerchantID: '2000132',
+  HashKey: '5294y06JbISpM5x9',
+  HashIV: 'v77hoKGq4kWxNNIS'
+};
+
+// 產生當前時間格式 (yyyy/MM/dd HH:mm:ss)
+function getFormattedDate() {
+  const date = new Date();
+  const pad = (num) => String(num).padStart(2, '0');
+  
+  const yyyy = date.getFullYear();
+  const MM = pad(date.getMonth() + 1);
+  const dd = pad(date.getDate());
+  const hh = pad(date.getHours());
+  const mm = pad(date.getMinutes());
+  const ss = pad(date.getSeconds());
+
+  return `${yyyy}/${MM}/${dd} ${hh}:${mm}:${ss}`;
+}
+
+// 計算綠界 CheckMacValue 檢查碼
+function generateCheckMacValue(params, hashKey, hashIV) {
+  // 1. 按 Key 字母 A-Z 排序
+  const sortedKeys = Object.keys(params).sort();
+  
+  // 2. 組合 key=value 陣列
+  let rawString = sortedKeys.map(key => `${key}=${params[key]}`).join('&');
+  
+  // 3. 前後加上 HashKey 與 HashIV
+  rawString = `HashKey=${hashKey}&${rawString}&HashIV=${hashIV}`;
+  
+  // 4. URL Encode 轉換並符合綠界特殊轉碼規則
+  let encodedString = encodeURIComponent(rawString).toLowerCase();
+  encodedString = encodedString
+    .replace(/%20/g, '+')
+    .replace(/%21/g, '!')
+    .replace(/%28/g, '(')
+    .replace(/%29/g, ')')
+    .replace(/%2a/g, '*');
+
+  // 5. SHA256 加密並轉大寫
+  return CryptoJS.SHA256(encodedString).toString().toUpperCase();
+}
+
+// 發送綠界付款表單
+function submitECPayForm(amount, freqText) {
+  const tradeNo = 'Donate' + Date.now(); // 產生唯一訂單編號
+  const tradeDate = getFormattedDate();
+
+  // 基本金流參數
+  const params = {
+    MerchantID: ECPAY_CONFIG.MerchantID,
+    MerchantTradeNo: tradeNo,
+    MerchantTradeDate: tradeDate,
+    PaymentType: 'aio',
+    TotalAmount: String(amount), // 交易金額
+    TradeDesc: '人道救援捐款',
+    ItemName: `阿富汗人道救援捐款 (${freqText})`,
+    ReturnURL: 'https://www.ecpay.com.tw/receive.php', // 綠界伺服器回傳地址 (前端測試可填預設)
+    ChoosePayment: 'Credit', // 指定信用卡付款
+    EncryptType: '1'
+  };
+
+  // 生成 CheckMacValue
+  params.CheckMacValue = generateCheckMacValue(params, ECPAY_CONFIG.HashKey, ECPAY_CONFIG.HashIV);
+
+  // 建立動態表單並提交
+  const form = document.getElementById('ecpayForm');
+  form.innerHTML = ''; // 清空既有欄位
+
+  Object.keys(params).forEach(key => {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = key;
+    input.value = params[key];
+    form.appendChild(input);
+  });
+
+  // 自動提交至綠界測試環境
+  form.submit();
+}
+
 // scroll reveal
 const revealEls = document.querySelectorAll('.reveal');
 const io = new IntersectionObserver((entries)=>{
@@ -83,10 +167,11 @@ if(submitBtn){
     const freq = freqEl ? freqEl.dataset.freq : 'once';
     let amount = selected && selected.dataset.amount !== 'custom' ? selected.dataset.amount : customInput.value;
     const box = document.getElementById('confirmBox');
-    if(!amount){ box.textContent = '請先選擇或輸入捐款金額。'; box.classList.add('show'); return; }
+    if(!amount || Number(amount) <= 0){ box.textContent = '請先選擇或輸入有效的捐款金額。'; box.classList.add('show'); return; }
     const freqText = freq === 'monthly' ? '每月定期' : '單筆';
-    box.textContent = `感謝您的支持！這是示範頁面，尚未串接金流：您選擇的方案為 ${freqText}捐款 NT$${Number(amount).toLocaleString()}。`;
-    box.classList.add('show');
+    
+    // 觸發綠界測試金流
+    submitECPayForm(amount, freqText);
   });
 }
 

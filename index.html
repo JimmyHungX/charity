@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700;900&family=Noto+Sans+TC:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<!-- 引入 CryptoJS 用於生成綠界 CheckMacValue (SHA256) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
 <body>
 
@@ -184,9 +186,21 @@
         <input type="number" min="1" placeholder="輸入您想捐款的金額" id="customInput">
       </div>
 
-      <button class="donate-submit" id="submitBtn">前往捐款</button>
-      <p class="donate-note">本頁面為概念展示網站，尚未串接金流服務，「前往捐款」按鈕不會產生實際扣款。</p>
+      <div class="test-card-info">
+        <h3>綠界測試刷卡資訊</h3>
+        <p>卡號：<code>4311-9522-2222-2222</code></p>
+        <p>有效月年：任意未來年月（如 12/28）</p>
+        <p>安全碼：<code>222</code></p>
+      </div>
+
+      <button class="donate-submit" id="submitBtn">前往綠界捐款</button>
+      <p class="donate-note">本頁面已串接綠界金流測試環境，點擊「前往綠界捐款」將跳轉至綠界測試頁面，請使用上方測試卡號測試。</p>
       <div class="confirm-box" id="confirmBox"></div>
+
+      <!-- 隱藏的綠界提交表單 -->
+      <form id="ecpayForm" method="POST" action="https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5">
+        <!-- 動態填入參數 -->
+      </form>
     </div>
   </div>
 </section>
@@ -263,7 +277,7 @@
       </div>
     </div>
     <div class="footer-disclaimer">
-      本網站為一頁式募款頁面的教學／概念設計範例，內容與統計數字為示意用途，未代表任何特定組織之官方立場或最新數據；如需捐款支持阿富汗人道援助，建議透過您信任的正式人道組織官方網站進行。頁面未串接金流服務，僅供介面設計參考。頁面中的紀錄照片僅供展示說明，適用於非商業／教學設計用途。
+      本網站為一頁式募款頁面的教學／概念設計範例，內容與統計數字為示意用途，未代表任何特定組織之官方立場或最新數據；如需捐款支持阿富汗人道援助，建議透過您信任的正式人道組織官方網站進行。頁面已串接綠界測試金流服務，僅供測試參考。頁面中的紀錄照片僅供展示說明，適用於非商業／教學設計用途。
     </div>
   </div>
 </footer>
