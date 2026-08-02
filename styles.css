@@ -255,6 +255,25 @@
     display:flex; align-items:center; gap:8px;
     opacity:0; transform:translateY(16px) scale(0.95); pointer-events:none;
     transition:opacity 0.3s ease, transform 0.3s ease, background 0.2s ease;
+        .custom-amount{display:flex; align-items:center; gap:10px; background:var(--paper); border:1px solid va
+r(--rule); border-radius:2px; padding:14px 16px; margin-bottom:26px;}
+  .custom-amount span{font-family:var(--mono); color:var(--ink-soft); font-size:0.94rem;}
+  .custom-amount input{flex:1; background:none; border:none; outline:none; color:var(--ink); font-family:
+var(--mono); font-size:1rem;}
+  .donate-submit{width:100%; background:var(--gold); color:#fff; font-weight:700; padding:16px; border:no
+ne; border-radius:2px; font-size:1rem; cursor:pointer; transition:background 0.2s ease, transform 0.2s ea
+se;}
+  .donate-submit{width:100%; background:var(--gold); color:#fff; font-weight:700; padding:16px; border:no
+ne; border-radius:2px; font-size:1rem; cursor:pointer; transition:background 0.2s ease, transform 0.2s ea
+se; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none;}
+  .donate-submit:hover{background:var(--gold-deep); transform:translateY(-2px);}
+  .ecpay-btn{background:#00703C; border:1px solid #005a2b;}
+  .ecpay-btn:hover{background:#005a2b; transform:translateY(-2px);}
+  .donate-note{text-align:center; font-size:0.77rem; color:var(--ink-soft); margin-top:16px; line-height:
+1.6;}
+  .confirm-box{display:none; margin-top:20px; padding:15px 18px; background:var(--teal-tint); border:1px
+solid var(--teal); color:var(--teal-deep); font-size:0.87rem; border-radius:2px;}
+  .confirm-box.show{display:block;}
   }
   .sticky-donate.show{opacity:1; transform:translateY(0) scale(1); pointer-events:auto;}
   .sticky-donate:hover{background:var(--gold-deep);}
